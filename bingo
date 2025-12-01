@@ -1,4 +1,11 @@
-<style>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo Tabla Periódica – Pablo Carrillo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
     .bingo-wrapper{
       max-width:1000px;
       margin:0 auto;
@@ -462,54 +469,106 @@
       margin-top:0.3rem;
     }
   </style>
-<div class="bingo-wrapper">
-<div class="bingo-header">
-<div class="bingo-title">Bingo</div>
-<div class="bingo-subtitle">Tabla Periódica</div>
-<div class="bingo-author">Física y Química · Pablo Carrillo</div>
-</div>
-<div class="bingo-layout"><!-- PANEL IZQUIERDO: BOMBO -->
-<div class="panel-main">
-<div class="panel-main-inner">
-<div class="current-ball-area">
-<div class="current-label">Última bola extraída:</div>
-<div id="currentBall" class="ball"><span class="ball-empty">Pulsa “Sacar bola”</span></div>
-</div>
-<div class="controls"><button id="drawBtn" class="btn btn-primary" type="button"> 🎲 Sacar bola </button> <button id="resetBtn" class="btn btn-secondary" type="button"> 🔁 Reiniciar partida </button></div>
-<div class="small-note">Puedes activar o desactivar cartones en el panel derecho.</div>
-<div id="statusBanner" class="status-banner" style="display: none;"></div>
-<!-- Historial visible (solo nombres, para que lo vean los alumnos) -->
-<div class="history-box"><strong>Nombres extraídos hasta ahora:</strong>
-<div id="historyList" class="history-list"></div>
-</div>
-<!-- Panel ocultable para el profesor con símbolos --><details class="teacher-panel">
-<summary>🔐 Panel del profesor (símbolos y control)</summary>
-<p style="margin: 0.25rem 0 0.4rem;">Aquí puedes ver los <strong>símbolos</strong> en juego y cuáles han salido. Mantén este panel cerrado cuando compartas la pantalla con tu grupo.</p>
-<div class="symbol-board">
-<div class="symbol-board-title">Símbolos en juego (haz clic para excluir/incluir)</div>
-<div id="symbolGrid" class="symbol-grid"></div>
-</div>
-<div class="exclude-box"><strong>Excluir símbolos del bombo:</strong><br /><span>(separados por comas, p. ej. <code>He, Ne, Ar</code>)</span> <span data-exe-editor-type="exe-editor-textarea" id="excludedInput" class="exclude-textarea" spellcheck="false"><!--exe-editor-textarea--></span>
-<div style="margin-top: 0.25rem; text-align: right;"><button id="applyExcludedBtn" class="btn btn-secondary" type="button">🚫 Aplicar exclusiones</button></div>
-</div>
-</details></div>
-</div>
-<!-- PANEL DERECHO: CARTONES -->
-<div class="panel-cards">
-<h3>Cartones de bingo</h3>
-<p>Cada cartón tiene <strong>12 elementos</strong> (3 filas × 4 columnas). El programa detecta el <strong>primer cartón con línea</strong> (fila completa) y el <strong>primer cartón con bingo</strong> (las 12 casillas).</p>
-<details class="config">
-<summary>⚙️ Configuración de cartones (solo profesor)</summary>
-<p>Formato: un cartón por línea, con <strong>12 símbolos</strong> separados por coma:<br /><code>NºCartón: símbolo1, símbolo2, ..., símbolo12</code></p>
-<span data-exe-editor-type="exe-editor-textarea" id="cardsInput" class="config-textarea" spellcheck="false"><!--exe-editor-textarea--></span>
-<div style="margin-top: 0.35rem; display: flex; gap: 0.4rem; justify-content: flex-end; flex-wrap: wrap;"><button id="loadCardsBtn" class="btn btn-secondary" type="button">📥 Cargar cartones</button> <button id="saveConfigBtn" class="btn btn-secondary" type="button">💾 Guardar configuración en este ordenador</button> <button id="clearConfigBtn" class="btn btn-secondary" type="button">🗑️ Borrar guardado local</button></div>
-<p style="margin-top: 0.3rem; font-size: 0.75rem; color: #1e3a8a;">La configuración se guarda en este navegador (localStorage). Al abrir el bingo se cargará automáticamente.</p>
-</details>
-<div id="cardsContainer" class="cards-container"></div>
-<div id="noCardsMsg" class="no-cards">No hay cartones cargados. (Esto debería desaparecer al cargar los cartones por defecto).</div>
-</div>
-</div>
-<script>
+</head>
+
+<body>
+  <div class="bingo-wrapper">
+    <div class="bingo-header">
+      <div class="bingo-title">Bingo</div>
+      <div class="bingo-subtitle">Tabla Periódica</div>
+      <div class="bingo-author">Física y Química · Pablo Carrillo</div>
+    </div>
+
+    <div class="bingo-layout">
+      <!-- PANEL IZQUIERDO: BOMBO -->
+      <div class="panel-main">
+        <div class="panel-main-inner">
+          <div class="current-ball-area">
+            <div class="current-label">Última bola extraída:</div>
+            <div id="currentBall" class="ball">
+              <span class="ball-empty">Pulsa “Sacar bola”</span>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="drawBtn" class="btn btn-primary" type="button"> 🎲 Sacar bola </button>
+            <button id="resetBtn" class="btn btn-secondary" type="button"> 🔁 Reiniciar partida </button>
+          </div>
+
+          <div class="small-note">
+            Puedes activar o desactivar cartones en el panel derecho.
+          </div>
+
+          <div id="statusBanner" class="status-banner" style="display: none;"></div>
+
+          <!-- Historial visible (solo nombres, para que lo vean los alumnos) -->
+          <div class="history-box">
+            <strong>Nombres extraídos hasta ahora:</strong>
+            <div id="historyList" class="history-list"></div>
+          </div>
+
+          <!-- Panel ocultable para el profesor con símbolos -->
+          <details class="teacher-panel">
+            <summary>🔐 Panel del profesor (símbolos y control)</summary>
+            <p style="margin: 0.25rem 0 0.4rem;">
+              Aquí puedes ver los <strong>símbolos</strong> en juego y cuáles han salido.
+              Mantén este panel cerrado cuando compartas la pantalla con tu grupo.
+            </p>
+
+            <div class="symbol-board">
+              <div class="symbol-board-title">Símbolos en juego (haz clic para excluir/incluir)</div>
+              <div id="symbolGrid" class="symbol-grid"></div>
+            </div>
+
+            <div class="exclude-box">
+              <strong>Excluir símbolos del bombo:</strong><br>
+              <span>(separados por comas, p. ej. <code>He, Ne, Ar</code>)</span>
+              <textarea id="excludedInput" class="exclude-textarea" spellcheck="false"></textarea>
+              <div style="margin-top: 0.25rem; text-align: right;">
+                <button id="applyExcludedBtn" class="btn btn-secondary" type="button">
+                  🚫 Aplicar exclusiones
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- PANEL DERECHO: CARTONES -->
+      <div class="panel-cards">
+        <h3>Cartones de bingo</h3>
+        <p>
+          Cada cartón tiene <strong>12 elementos</strong> (3 filas × 4 columnas).
+          El programa detecta el <strong>primer cartón con línea</strong> (fila completa)
+          y el <strong>primer cartón con bingo</strong> (las 12 casillas).
+        </p>
+
+        <details class="config">
+          <summary>⚙️ Configuración de cartones (solo profesor)</summary>
+          <p>
+            Formato: un cartón por línea, con <strong>12 símbolos</strong> separados por coma:<br>
+            <code>NºCartón: símbolo1, símbolo2, ..., símbolo12</code>
+          </p>
+          <textarea id="cardsInput" class="config-textarea" spellcheck="false"></textarea>
+          <div style="margin-top: 0.35rem; display: flex; gap: 0.4rem; justify-content: flex-end; flex-wrap: wrap;">
+            <button id="loadCardsBtn" class="btn btn-secondary" type="button">📥 Cargar cartones</button>
+            <button id="saveConfigBtn" class="btn btn-secondary" type="button">💾 Guardar configuración en este ordenador</button>
+            <button id="clearConfigBtn" class="btn btn-secondary" type="button">🗑️ Borrar guardado local</button>
+          </div>
+          <p style="margin-top: 0.3rem; font-size: 0.75rem; color: #1e3a8a;">
+            La configuración se guarda en este navegador (localStorage). Al abrir el bingo se cargará automáticamente.
+          </p>
+        </details>
+
+        <div id="cardsContainer" class="cards-container"></div>
+        <div id="noCardsMsg" class="no-cards">
+          No hay cartones cargados. (Esto debería desaparecer al cargar los cartones por defecto).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
     (function(){
       "use strict";
 
@@ -1013,4 +1072,5 @@
 
     })();
   </script>
-</div>
+</body>
+</html>
