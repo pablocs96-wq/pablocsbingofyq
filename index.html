@@ -1,0 +1,1016 @@
+<style>
+    .bingo-wrapper{
+      max-width:1000px;
+      margin:0 auto;
+      padding:1.5rem 1.5rem 2rem;
+      border-radius:20px;
+      background:#d6f3ec;
+      font-family:"Trebuchet MS", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:#0b3b3a;
+      box-shadow:0 10px 25px rgba(0,0,0,0.15);
+    }
+    .bingo-header{
+      text-align:center;
+      margin-bottom:1rem;
+    }
+    .bingo-title{
+      font-size:2rem;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:#f59e0b;
+      text-shadow:0 2px 0 rgba(0,0,0,0.18);
+      margin-bottom:0.25rem;
+    }
+    .bingo-subtitle{
+      font-size:1.05rem;
+      letter-spacing:0.25em;
+      text-transform:uppercase;
+      color:#0f766e;
+      margin-bottom:0.2rem;
+    }
+    .bingo-author{
+      font-size:0.9rem;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      color:#065f46;
+      opacity:0.85;
+    }
+
+    .bingo-layout{
+      display:grid;
+      gap:1.25rem;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      margin-top:1.25rem;
+    }
+    @media (max-width:900px){
+      .bingo-layout{
+        grid-template-columns:1fr;
+      }
+    }
+
+    /* PANEL BOMBO */
+    .panel-main{
+      background:#c0ece4;
+      border-radius:18px;
+      padding:1rem 1.25rem 1.25rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .panel-main::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.25) 0, transparent 55%),
+        radial-gradient(circle at 90% 80%, rgba(255,255,255,0.2) 0, transparent 50%);
+      opacity:0.8;
+      pointer-events:none;
+    }
+    .panel-main-inner{
+      position:relative;
+      z-index:1;
+    }
+
+    .current-ball-area{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:1.25rem;
+      margin-bottom:1rem;
+      flex-wrap:wrap;
+    }
+    .current-label{
+      font-size:1.1rem;
+      font-weight:700;
+      color:#064e3b;
+    }
+    .ball{
+      width:140px;
+      height:140px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 25%, #ffffff, #fb923c);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.35rem;
+      font-weight:900;
+      text-align:center;
+      color:#1f2933;
+      box-shadow:0 6px 18px rgba(0,0,0,0.28);
+      border:4px solid rgba(255,255,255,0.85);
+      padding:0.7rem;
+      box-sizing:border-box;
+    }
+    .ball-empty{
+      font-size:1rem;
+      text-align:center;
+      padding:0 0.8rem;
+      color:#065f46;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:0.6rem;
+      justify-content:center;
+      margin-bottom:0.8rem;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:0.55rem 1.3rem;
+      font-size:0.95rem;
+      font-weight:700;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+      box-shadow:0 3px 8px rgba(0,0,0,0.18);
+      display:inline-flex;
+      align-items:center;
+      gap:0.35rem;
+    }
+    .btn-primary{
+      background:#f97316;
+      color:#ffffff;
+    }
+    .btn-primary:hover:not(:disabled){
+      background:#ea580c;
+      transform:translateY(-1px);
+      box-shadow:0 5px 12px rgba(0,0,0,0.22);
+    }
+    .btn-secondary{
+      background:#0ea5e9;
+      color:#f0fdfa;
+    }
+    .btn-secondary:hover:not(:disabled){
+      background:#0284c7;
+      transform:translateY(-1px);
+      box-shadow:0 5px 12px rgba(0,0,0,0.22);
+    }
+    .btn:disabled{
+      opacity:0.5;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+    }
+    .small-note{
+      font-size:0.8rem;
+      color:#064e3b;
+      text-align:center;
+      opacity:0.8;
+    }
+
+    .status-banner{
+      margin-top:0.6rem;
+      border-radius:14px;
+      padding:0.5rem 0.8rem;
+      background:#fef9c3;
+      border:1px solid #facc15;
+      font-size:0.9rem;
+      color:#713f12;
+    }
+    .status-banner strong{
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+    }
+    .status-banner .main{
+      font-weight:800;
+      color:#b45309;
+    }
+
+    /* Historial visible para alumnos (solo nombres) */
+    .history-box{
+      margin-top:0.8rem;
+      font-size:0.85rem;
+      color:#064e3b;
+    }
+    .history-box strong{
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      font-size:0.8rem;
+    }
+    .history-list{
+      margin-top:0.25rem;
+      max-height:110px;
+      overflow-y:auto;
+      padding-right:0.3rem;
+    }
+    .history-item{
+      display:inline-block;
+      margin:0 0.2rem 0.18rem 0;
+      padding:0.12rem 0.4rem;
+      border-radius:999px;
+      background:#fef3c7;
+      font-size:0.78rem;
+      color:#7c2d12;
+    }
+
+    /* Panel profesor (símbolos, ocultable) */
+    details.teacher-panel{
+      margin-top:0.7rem;
+      border-radius:12px;
+      background:#ecfdf5;
+      border:1px dashed rgba(22,163,74,0.35);
+      padding:0.35rem 0.55rem 0.55rem;
+      font-size:0.78rem;
+      color:#166534;
+    }
+    details.teacher-panel summary{
+      cursor:pointer;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      list-style:none;
+    }
+    details.teacher-panel[open] summary{
+      margin-bottom:0.3rem;
+    }
+    details.teacher-panel summary::-webkit-details-marker{
+      display:none;
+    }
+
+    .symbol-board{
+      margin-top:0.4rem;
+      background:#ecfdf5;
+      border-radius:14px;
+      padding:0.6rem 0.7rem 0.7rem;
+      border:1px solid rgba(22,163,74,0.18);
+    }
+    .symbol-board-title{
+      font-size:0.85rem;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:#166534;
+      margin-bottom:0.35rem;
+      font-weight:700;
+    }
+    .symbol-grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.25rem;
+    }
+    .symbol-pill{
+      min-width:32px;
+      padding:0.25rem 0.45rem;
+      border-radius:999px;
+      background:#a7f3d0;
+      font-size:0.8rem;
+      text-align:center;
+      color:#064e3b;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      user-select:none;
+    }
+    .symbol-pill.drawn{
+      background:#22c55e;
+      color:#022c22;
+      font-weight:700;
+    }
+    .symbol-pill .order{
+      position:absolute;
+      right:4px;
+      bottom:2px;
+      font-size:0.65rem;
+      color:rgba(15,118,110,0.9);
+    }
+    .symbol-pill.excluded{
+      background:#e5e7eb;
+      color:#6b7280;
+      text-decoration:line-through;
+    }
+
+    .exclude-box{
+      margin-top:0.5rem;
+      font-size:0.78rem;
+      color:#166534;
+    }
+    .exclude-textarea{
+      width:100%;
+      min-height:50px;
+      border-radius:8px;
+      border:1px solid rgba(22,163,74,0.35);
+      padding:0.3rem 0.45rem;
+      font-size:0.78rem;
+      font-family:monospace;
+      box-sizing:border-box;
+      resize:vertical;
+    }
+
+    /* PANEL CARTONES */
+    .panel-cards{
+      background:#e0f2fe;
+      border-radius:18px;
+      padding:1rem 1.1rem 1.25rem;
+      border:1px solid rgba(37,99,235,0.18);
+      max-height:650px;
+      overflow-y:auto;
+    }
+    .panel-cards h3{
+      margin-top:0;
+      font-size:1rem;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:#1d4ed8;
+      margin-bottom:0.35rem;
+    }
+    .panel-cards p{
+      margin:0 0 0.4rem 0;
+      font-size:0.78rem;
+      color:#1e3a8a;
+    }
+
+    details.config{
+      margin-bottom:0.6rem;
+      border-radius:12px;
+      background:#eff6ff;
+      border:1px dashed rgba(37,99,235,0.35);
+      padding:0.4rem 0.6rem;
+      font-size:0.78rem;
+      color:#1e3a8a;
+    }
+    details.config summary{
+      cursor:pointer;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:0.09em;
+      list-style:none;
+    }
+    details.config[open] summary{
+      margin-bottom:0.3rem;
+    }
+    details.config summary::-webkit-details-marker{
+      display:none;
+    }
+
+    .config-textarea{
+      width:100%;
+      min-height:140px;
+      border-radius:10px;
+      border:1px solid rgba(37,99,235,0.35);
+      padding:0.4rem 0.6rem;
+      font-size:0.78rem;
+      font-family:monospace;
+      resize:vertical;
+      box-sizing:border-box;
+      background:#ffffff;
+    }
+
+    .cards-container{
+      margin-top:0.5rem;
+      display:flex;
+      flex-direction:column;
+      gap:0.6rem;
+    }
+    .card{
+      background:#bbf7d0;
+      border-radius:16px;
+      padding:0.55rem 0.6rem 0.65rem;
+      box-shadow:0 2px 7px rgba(0,0,0,0.12);
+      border:1px solid rgba(22,163,74,0.25);
+      opacity:1;
+      transition:opacity 0.15s ease;
+    }
+    .card.inactive{
+      opacity:0.45;
+    }
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.25rem;
+      font-size:0.8rem;
+      gap:0.4rem;
+      flex-wrap:wrap;
+    }
+    .card-title{
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:0.09em;
+      color:#166534;
+    }
+    .card-status{
+      font-size:0.75rem;
+      padding:0.12rem 0.5rem;
+      border-radius:999px;
+      background:#dcfce7;
+      color:#166534;
+      border:1px solid rgba(22,163,74,0.35);
+    }
+    .card-status.bingo{
+      background:#f97316;
+      color:#fff7ed;
+      border-color:#ea580c;
+      font-weight:800;
+    }
+    .card-status.line{
+      background:#22c55e;
+      color:#022c22;
+      border-color:#16a34a;
+      font-weight:800;
+    }
+    .card-active-toggle{
+      font-size:0.74rem;
+      color:#1e3a8a;
+      display:flex;
+      align-items:center;
+      gap:0.18rem;
+    }
+    .card-active-toggle input{
+      transform:scale(1.1);
+    }
+
+    .card-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr)); /* 4 columnas */
+      gap:0.25rem;
+      margin-top:0.2rem;
+    }
+    .card-cell{
+      background:#fefce8;
+      border-radius:10px;
+      text-align:center;
+      padding:0.25rem 0.1rem;
+      font-size:0.85rem;
+      font-weight:600;
+      color:#4b5563;
+      position:relative;
+    }
+    .card-cell::before{
+      content:"";
+      position:absolute;
+      inset:4px;
+      border-radius:9px;
+      border:1px dashed rgba(180,83,9,0.25);
+      opacity:0.85;
+    }
+    .card-cell.marked{
+      background:#fde68a;
+      color:#7c2d12;
+      font-weight:800;
+    }
+    .card-cell.marked::before{
+      border-color:rgba(180,83,9,0.7);
+    }
+
+    .no-cards{
+      font-size:0.8rem;
+      color:#1e3a8a;
+      font-style:italic;
+      margin-top:0.3rem;
+    }
+  </style>
+<div class="bingo-wrapper">
+<div class="bingo-header">
+<div class="bingo-title">Bingo</div>
+<div class="bingo-subtitle">Tabla Periódica</div>
+<div class="bingo-author">Física y Química · Pablo Carrillo</div>
+</div>
+<div class="bingo-layout"><!-- PANEL IZQUIERDO: BOMBO -->
+<div class="panel-main">
+<div class="panel-main-inner">
+<div class="current-ball-area">
+<div class="current-label">Última bola extraída:</div>
+<div id="currentBall" class="ball"><span class="ball-empty">Pulsa “Sacar bola”</span></div>
+</div>
+<div class="controls"><button id="drawBtn" class="btn btn-primary" type="button"> 🎲 Sacar bola </button> <button id="resetBtn" class="btn btn-secondary" type="button"> 🔁 Reiniciar partida </button></div>
+<div class="small-note">Puedes activar o desactivar cartones en el panel derecho.</div>
+<div id="statusBanner" class="status-banner" style="display: none;"></div>
+<!-- Historial visible (solo nombres, para que lo vean los alumnos) -->
+<div class="history-box"><strong>Nombres extraídos hasta ahora:</strong>
+<div id="historyList" class="history-list"></div>
+</div>
+<!-- Panel ocultable para el profesor con símbolos --><details class="teacher-panel">
+<summary>🔐 Panel del profesor (símbolos y control)</summary>
+<p style="margin: 0.25rem 0 0.4rem;">Aquí puedes ver los <strong>símbolos</strong> en juego y cuáles han salido. Mantén este panel cerrado cuando compartas la pantalla con tu grupo.</p>
+<div class="symbol-board">
+<div class="symbol-board-title">Símbolos en juego (haz clic para excluir/incluir)</div>
+<div id="symbolGrid" class="symbol-grid"></div>
+</div>
+<div class="exclude-box"><strong>Excluir símbolos del bombo:</strong><br /><span>(separados por comas, p. ej. <code>He, Ne, Ar</code>)</span> <span data-exe-editor-type="exe-editor-textarea" id="excludedInput" class="exclude-textarea" spellcheck="false"><!--exe-editor-textarea--></span>
+<div style="margin-top: 0.25rem; text-align: right;"><button id="applyExcludedBtn" class="btn btn-secondary" type="button">🚫 Aplicar exclusiones</button></div>
+</div>
+</details></div>
+</div>
+<!-- PANEL DERECHO: CARTONES -->
+<div class="panel-cards">
+<h3>Cartones de bingo</h3>
+<p>Cada cartón tiene <strong>12 elementos</strong> (3 filas × 4 columnas). El programa detecta el <strong>primer cartón con línea</strong> (fila completa) y el <strong>primer cartón con bingo</strong> (las 12 casillas).</p>
+<details class="config">
+<summary>⚙️ Configuración de cartones (solo profesor)</summary>
+<p>Formato: un cartón por línea, con <strong>12 símbolos</strong> separados por coma:<br /><code>NºCartón: símbolo1, símbolo2, ..., símbolo12</code></p>
+<span data-exe-editor-type="exe-editor-textarea" id="cardsInput" class="config-textarea" spellcheck="false"><!--exe-editor-textarea--></span>
+<div style="margin-top: 0.35rem; display: flex; gap: 0.4rem; justify-content: flex-end; flex-wrap: wrap;"><button id="loadCardsBtn" class="btn btn-secondary" type="button">📥 Cargar cartones</button> <button id="saveConfigBtn" class="btn btn-secondary" type="button">💾 Guardar configuración en este ordenador</button> <button id="clearConfigBtn" class="btn btn-secondary" type="button">🗑️ Borrar guardado local</button></div>
+<p style="margin-top: 0.3rem; font-size: 0.75rem; color: #1e3a8a;">La configuración se guarda en este navegador (localStorage). Al abrir el bingo se cargará automáticamente.</p>
+</details>
+<div id="cardsContainer" class="cards-container"></div>
+<div id="noCardsMsg" class="no-cards">No hay cartones cargados. (Esto debería desaparecer al cargar los cartones por defecto).</div>
+</div>
+</div>
+<script>
+    (function(){
+      "use strict";
+
+      const STORAGE_CARDS_KEY = "bingo_cartones_tp";
+      const STORAGE_EXCLUDED_KEY = "bingo_excluidos_tp";
+
+      // Cartones del PDF (tus 22, 12 elementos cada uno, con duplicados tal cual)
+      const DEFAULT_CARDS_TEXT =
+`1: Mn, Si, Cl, Cu, S, Mo, K, P, Zn, P, Na, Sn
+2: Mn, Zn, O, K, Tl, Cs, Ra, P, Rn, Be, Na, S
+3: K, Si, Cl, At, Si, S, In, Kr, Sr, Be, Po, As
+4: H, Mg, Cl, Ne, S, Ge, Br, P, F, P, Al, Sn
+5: Mn, Ra, Bi, Ar, Tl, Pb, Cl, He, Rb, Po, Nh, Fr
+6: Na, N, Xe, At, Ba, Pb, Sn, C, Al, Br, Li, I
+7: Li, Ga, Cl, Po, Ra, Pb, Br, As, F, Rn, Te, P
+8: Rb, Ra, Xe, Pb, Br, S, Cl, Mg, Si, In, Ga, Ar
+9: Bi, N, O, I, K, Pb, Au, Na, Cs, Ba, Li, Tl
+10: Mn, S, Cl, Po, K, Mg, Br, As, Ag, Be, Te, C
+11: Ra, Po, Pb, Cu, Cs, Pt, N, Be, Si, B, In, Br
+12: He, Cl, Se, Sb, Rb, Sr, Ga, Si, P, Xe, Be, Au
+13: I, S, Nh, Bi, K, Al, Br, Sn, Fe, Be, C, Hg
+14: Na, Fe, Mg, Te, Cr, C, N, In, Mn, Zn, S, Br
+15: Hg, Ca, Se, Pt, Be, I, Ag, Li, Po, Fr, Ga, Ba
+16: B, At, Mn, Sr, S, P, Sr, Sn, Cs, Au, In, Hg
+17: Xe, Ge, Mg, Bi, Li, Ra, N, Fe, Mn, Rn, S, Si
+18: Cu, Ba, F, Pt, Be, Sb, Po, Na, Zn, Fr, Mn, Ba
+19: Ar, Hg, Ca, Si, Ga, Rb, O, Po, Au, Te, Sn, Zn
+20: Cu, B, Mg, H, Li, Ra, N, Pb, Se, Xe, Tl, Ag
+21: K, Ba, Fe, Cr, Be, Mg, S, Na, Zn, In, Mn, Kr
+22: S, Mo, K, Se, Zn, P, Na, N, Cr, Fe, Ca, Mg`;
+
+      // --- Mapa símbolo -> nombre en español ---
+      const NOMBRE_ELEMENTO = {
+        H:"Hidrógeno", He:"Helio",
+        Li:"Litio", Be:"Berilio", B:"Boro", C:"Carbono", N:"Nitrógeno", O:"Oxígeno",
+        F:"Flúor", Ne:"Neón",
+        Na:"Sodio", Mg:"Magnesio", Al:"Aluminio", Si:"Silicio", P:"Fósforo",
+        S:"Azufre", Cl:"Cloro", Ar:"Argón",
+        K:"Potasio", Ca:"Calcio", Sc:"Escandio", Ti:"Titanio", V:"Vanadio",
+        Cr:"Cromo", Mn:"Manganeso", Fe:"Hierro", Co:"Cobalto", Ni:"Níquel",
+        Cu:"Cobre", Zn:"Zinc", Ga:"Galio", Ge:"Germanio", As:"Arsénico",
+        Se:"Selenio", Br:"Bromo", Kr:"Kriptón",
+        Rb:"Rubidio", Sr:"Estroncio", Y:"Itrio", Zr:"Zirconio", Nb:"Niobio",
+        Mo:"Molibdeno", Tc:"Tecnecio", Ru:"Rutenio", Rh:"Rodio", Pd:"Paladio",
+        Ag:"Plata", Cd:"Cadmio", In:"Indio", Sn:"Estaño", Sb:"Antimonio",
+        Te:"Telurio", I:"Yodo", Xe:"Xenón",
+        Cs:"Cesio", Ba:"Bario", La:"Lantano", Ce:"Cerio", Pr:"Praseodimio",
+        Nd:"Neodimio", Pm:"Prometio", Sm:"Samario", Eu:"Europio", Gd:"Gadolinio",
+        Tb:"Terbio", Dy:"Disprosio", Ho:"Holmio", Er:"Erbio", Tm:"Tulio",
+        Yb:"Iterbio", Lu:"Lutecio",
+        Hf:"Hafnio", Ta:"Tántalo", W:"Wolframio", Re:"Renio", Os:"Osmio",
+        Ir:"Iridio", Pt:"Platino", Au:"Oro", Hg:"Mercurio",
+        Tl:"Talio", Pb:"Plomo", Bi:"Bismuto", Po:"Polonio", At:"Ástato",
+        Rn:"Radón",
+        Fr:"Francio", Ra:"Radio", Ac:"Actinio", Th:"Torio", Pa:"Protactinio",
+        U:"Uranio", Np:"Neptunio", Pu:"Plutonio", Am:"Americio", Cm:"Curio",
+        Bk:"Berkelio", Cf:"Californio", Es:"Einstenio", Fm:"Fermio",
+        Md:"Mendelevio", No:"Nobelio", Lr:"Lawrencio",
+        Rf:"Rutherfordio", Db:"Dubnio", Sg:"Seaborgio", Bh:"Bohrio",
+        Hs:"Hassio", Mt:"Meitnerio", Ds:"Darmstadtio", Rg:"Roentgenio",
+        Cn:"Copernicio", Nh:"Nihonio", Fl:"Flerovio", Mc:"Moscovio",
+        Lv:"Livermorio", Ts:"Tenesino", Og:"Oganesón"
+      };
+
+      // --- Estado global ---
+      let cards = [];             // {id, symbols[12], hasBingo, active, lines:Set}
+      let allSymbols = [];        // símbolos presentes en cartones activos
+      let remainingSymbols = [];  // símbolos aún no extraídos (y no excluidos)
+      let drawnSymbols = [];      // historial (símbolos) en orden
+      let drawnSet = new Set();
+      let firstBingoCardId = null;
+      let firstLineCardId = null;
+      let firstLineRow = null;
+      let excludedSet = new Set();
+
+      // --- Referencias DOM ---
+      const drawBtn        = document.getElementById("drawBtn");
+      const resetBtn       = document.getElementById("resetBtn");
+      const loadCardsBtn   = document.getElementById("loadCardsBtn");
+      const saveConfigBtn  = document.getElementById("saveConfigBtn");
+      const clearConfigBtn = document.getElementById("clearConfigBtn");
+      const cardsInput     = document.getElementById("cardsInput");
+      const cardsContainer = document.getElementById("cardsContainer");
+      const noCardsMsg     = document.getElementById("noCardsMsg");
+      const currentBallEl  = document.getElementById("currentBall");
+      const symbolGridEl   = document.getElementById("symbolGrid");
+      const historyListEl  = document.getElementById("historyList");
+      const statusBanner   = document.getElementById("statusBanner");
+      const excludedInput  = document.getElementById("excludedInput");
+      const applyExcludedBtn = document.getElementById("applyExcludedBtn");
+
+      // --- Utilidades ---
+      function normalizaSimbolo(raw){
+        let s = raw.trim();
+        if(!s) return "";
+        s = s.replace(/\s+/g,"");
+        if(!s) return "";
+        if(s.length === 1) return s.toUpperCase();
+        return s[0].toUpperCase() + s.slice(1).toLowerCase();
+      }
+
+      function baraja(array){
+        for(let i = array.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function creaEl(tag, className, text){
+        const el = document.createElement(tag);
+        if(className) el.className = className;
+        if(text !== undefined) el.textContent = text;
+        return el;
+      }
+
+      function nombreElemento(simbolo){
+        return NOMBRE_ELEMENTO[simbolo] || simbolo;
+      }
+
+      function recalculaSimbolosGlobales(){
+        const activos = cards.filter(c => c.active);
+        const set = new Set();
+        activos.forEach(c => c.symbols.forEach(s => set.add(s)));
+        allSymbols = Array.from(set).sort();
+      }
+
+      function rebuildRemaining(){
+        remainingSymbols = allSymbols.filter(
+          s => !excludedSet.has(s) && !drawnSet.has(s)
+        );
+      }
+
+      function syncExcludedTextarea(){
+        if(excludedInput){
+          excludedInput.value = Array.from(excludedSet).sort().join(", ");
+        }
+      }
+
+      // --- Cargar cartones desde textarea ---
+      function cargarCartonesDesdeTexto(){
+        const text = cardsInput.value || "";
+        const lineas = text.split(/\r?\n/).map(l => l.trim()).filter(l => l !== "");
+        const nuevos = [];
+
+        for(const linea of lineas){
+          const partes = linea.split(":");
+          if(partes.length < 2) continue;
+          const id = partes[0].trim().replace(/^N[ºo]\s*/i,"") || "?";
+          const resto = partes.slice(1).join(":");
+          const simbolosCrudos = resto.split(",").map(normalizaSimbolo).filter(s => s !== "");
+          if(simbolosCrudos.length === 0) continue;
+
+          const symbols = simbolosCrudos.slice(0,12); // 12 casillas
+
+          nuevos.push({
+            id: id,
+            symbols: symbols,
+            hasBingo: false,
+            active: true,
+            lines: new Set()
+          });
+        }
+
+        cards = nuevos;
+        drawnSymbols = [];
+        drawnSet = new Set();
+        firstBingoCardId = null;
+        firstLineCardId = null;
+        firstLineRow = null;
+        excludedSet = new Set();
+        syncExcludedTextarea();
+
+        cards.forEach(c => {
+          c.hasBingo = false;
+          c.active = true;
+          c.lines = new Set();
+        });
+
+        recalculaSimbolosGlobales();
+        rebuildRemaining();
+
+        drawBtn.disabled = (remainingSymbols.length === 0);
+        noCardsMsg.style.display = (cards.length === 0) ? "block" : "none";
+
+        actualizarUI(true);
+      }
+
+      // --- Guardar / borrar configuración en localStorage ---
+      function guardarConfiguracionLocal(){
+        try{
+          localStorage.setItem(STORAGE_CARDS_KEY, cardsInput.value || "");
+          localStorage.setItem(STORAGE_EXCLUDED_KEY, excludedInput.value || "");
+          alert("Configuración guardada en este ordenador.");
+        }catch(e){
+          console && console.error && console.error(e);
+          alert("No se ha podido guardar la configuración (revisa permisos del navegador).");
+        }
+      }
+
+      function borrarConfiguracionLocal(){
+        try{
+          localStorage.removeItem(STORAGE_CARDS_KEY);
+          localStorage.removeItem(STORAGE_EXCLUDED_KEY);
+          alert("Guardado local borrado. No afectará a los cartones ya cargados.");
+        }catch(e){
+          console && console.error && console.error(e);
+        }
+      }
+
+      // --- Aplicar exclusiones desde textarea ---
+      function aplicarExclusiones(){
+        const raw = excludedInput.value || "";
+        const parts = raw.split(",").map(normalizaSimbolo).filter(s => s !== "");
+        excludedSet = new Set(parts);
+        rebuildRemaining();
+        drawBtn.disabled = (remainingSymbols.length === 0);
+        actualizarUI(false);
+      }
+
+      // --- Alternar exclusión haciendo clic en el símbolo ---
+      function toggleExcludeSymbol(simbolo){
+        if(excludedSet.has(simbolo)){
+          excludedSet.delete(simbolo);
+        }else{
+          excludedSet.add(simbolo);
+        }
+        rebuildRemaining();
+        drawBtn.disabled = (remainingSymbols.length === 0);
+        syncExcludedTextarea();
+        actualizarUI(false);
+      }
+
+      // --- Sacar una bola ---
+      function sacarBola(){
+        if(remainingSymbols.length === 0){
+          drawBtn.disabled = true;
+          return;
+        }
+
+        baraja(remainingSymbols);
+        const simbolo = remainingSymbols.pop();
+
+        drawnSymbols.push(simbolo);
+        drawnSet.add(simbolo);
+
+        comprobarLineasYBingos();
+        rebuildRemaining();
+        actualizarUI(false);
+
+        if(remainingSymbols.length === 0){
+          drawBtn.disabled = true;
+        }
+      }
+
+      // --- Comprobar líneas y bingos ---
+      function comprobarLineasYBingos(){
+        let nuevosBingos = [];
+        let nuevasLineas = [];
+
+        for(const card of cards){
+          if(!card.active) continue;
+
+          const cols = 4; // 4 columnas
+          const total = card.symbols.length;
+          const numFilas = Math.ceil(total / cols);
+
+          for(let fila = 0; fila < numFilas; fila++){
+            if(card.lines.has(fila)) continue;
+            const start = fila * cols;
+            const end = Math.min(start + cols, total);
+            const filaSymbols = card.symbols.slice(start, end);
+            if(filaSymbols.length === 0) continue;
+            const completa = filaSymbols.every(s => drawnSet.has(s));
+            if(completa){
+              card.lines.add(fila);
+              nuevasLineas.push({cardId: card.id, fila: fila});
+            }
+          }
+
+          if(!card.hasBingo){
+            const todosDentro = card.symbols.every(s => drawnSet.has(s));
+            if(todosDentro){
+              card.hasBingo = true;
+              nuevosBingos.push(card.id);
+            }
+          }
+        }
+
+        if(nuevasLineas.length > 0 && !firstLineCardId){
+          firstLineCardId = nuevasLineas[0].cardId;
+          firstLineRow = nuevasLineas[0].fila;
+        }
+
+        if(nuevosBingos.length > 0 && !firstBingoCardId){
+          firstBingoCardId = nuevosBingos[0];
+        }
+
+        let msgParts = [];
+
+        if(firstLineCardId !== null){
+          const otrasLineas = cards
+            .filter(c => c.active && c.lines.size > 0 && c.id !== firstLineCardId)
+            .map(c => c.id);
+          let m = `<strong>¡Línea!</strong> <span class="main">Cartón Nº ${firstLineCardId}</span>`;
+          if(firstLineRow !== null){
+            m += ` (fila ${firstLineRow + 1})`;
+          }
+          if(otrasLineas.length > 0){
+            m += ` · Otros cartones con línea: Nº ${otrasLineas.join(", Nº ")}.`;
+          }
+          msgParts.push(m);
+        }
+
+        if(firstBingoCardId){
+          const otrosBingos = cards
+            .filter(c => c.active && c.hasBingo && c.id !== firstBingoCardId)
+            .map(c => c.id);
+          let m = `<strong>¡Bingo!</strong> <span class="main">Cartón Nº ${firstBingoCardId}</span>`;
+          if(otrosBingos.length > 0){
+            m += ` · Otros cartones con bingo: Nº ${otrosBingos.join(", Nº ")}.`;
+          }
+          msgParts.push(m);
+        }
+
+        if(msgParts.length > 0){
+          statusBanner.innerHTML = msgParts.join("<br>");
+          statusBanner.style.display = "block";
+        }else{
+          statusBanner.style.display = "none";
+        }
+      }
+
+      // --- Reiniciar partida (manteniendo cartones y exclusiones) ---
+      function reiniciar(){
+        drawnSymbols = [];
+        drawnSet = new Set();
+        firstBingoCardId = null;
+        firstLineCardId = null;
+        firstLineRow = null;
+        cards.forEach(c => {
+          c.hasBingo = false;
+          c.lines = new Set();
+        });
+
+        recalculaSimbolosGlobales();
+        rebuildRemaining();
+        drawBtn.disabled = (remainingSymbols.length === 0);
+
+        actualizarUI(true);
+      }
+
+      // --- Cambiar activo/inactivo un cartón ---
+      function toggleActivo(cardId, activo){
+        const card = cards.find(c => c.id === cardId);
+        if(!card) return;
+        card.active = !!activo;
+
+        recalculaSimbolosGlobales();
+        rebuildRemaining();
+
+        drawBtn.disabled = (remainingSymbols.length === 0);
+        actualizarUI(false);
+      }
+
+      // --- Pintar interfaz ---
+      function actualizarUI(resetBall){
+        // Bola actual -> solo nombre del elemento
+        if(drawnSymbols.length === 0 || resetBall){
+          currentBallEl.innerHTML = '<span class="ball-empty">Pulsa “Sacar bola”</span>';
+        }else{
+          const ultimoSimbolo = drawnSymbols[drawnSymbols.length - 1];
+          const nombre = nombreElemento(ultimoSimbolo);
+          currentBallEl.textContent = nombre;
+        }
+
+        // Historial visible (solo nombres)
+        historyListEl.innerHTML = "";
+        drawnSymbols.forEach((sim, idx) => {
+          const nombre = nombreElemento(sim);
+          const item = creaEl("span","history-item", (idx+1)+": "+nombre );
+          historyListEl.appendChild(item);
+        });
+
+        // Tablero de símbolos (panel profesor)
+        symbolGridEl.innerHTML = "";
+        allSymbols.forEach(sim => {
+          const pill = creaEl("div","symbol-pill",sim);
+          if(excludedSet.has(sim)){
+            pill.classList.add("excluded");
+          }
+          if(drawnSet.has(sim)){
+            pill.classList.add("drawn");
+            const idx = drawnSymbols.indexOf(sim);
+            if(idx !== -1){
+              const order = creaEl("span","order","#"+(idx+1));
+              pill.appendChild(order);
+            }
+          }
+          pill.addEventListener("click", function(ev){
+            ev.preventDefault();
+            ev.stopPropagation();
+            toggleExcludeSymbol(sim);
+          });
+          symbolGridEl.appendChild(pill);
+        });
+
+        // Cartones
+        cardsContainer.innerHTML = "";
+        cards.forEach(card => {
+          const cardEl = creaEl("div","card");
+          if(!card.active){
+            cardEl.classList.add("inactive");
+          }
+
+          const header = creaEl("div","card-header");
+          const title = creaEl("div","card-title", "Cartón Nº "+card.id);
+
+          const rightBox = document.createElement("div");
+          rightBox.style.display = "flex";
+          rightBox.style.alignItems = "center";
+          rightBox.style.gap = "0.3rem";
+
+          let statusText = "En juego";
+          let statusClass = "card-status";
+
+          if(card.hasBingo && card.active){
+            statusText = "BINGO";
+            statusClass += " bingo";
+          }else if(card.lines && card.lines.size > 0 && card.active){
+            statusText = "LÍNEA";
+            statusClass += " line";
+          }else if(!card.active){
+            statusText = "Inactivo";
+          }
+          const status = creaEl("div", statusClass, statusText);
+
+          const toggleLabel = creaEl("label","card-active-toggle");
+          const toggle = document.createElement("input");
+          toggle.type = "checkbox";
+          toggle.checked = card.active;
+          toggle.addEventListener("change", function(){
+            toggleActivo(card.id, this.checked);
+          });
+          toggleLabel.appendChild(toggle);
+          toggleLabel.appendChild(document.createTextNode("En juego"));
+
+          rightBox.appendChild(status);
+          rightBox.appendChild(toggleLabel);
+
+          header.appendChild(title);
+          header.appendChild(rightBox);
+          cardEl.appendChild(header);
+
+          const grid = creaEl("div","card-grid");
+          card.symbols.forEach(sim => {
+            const cell = creaEl("div","card-cell",sim);
+            if(drawnSet.has(sim)){
+              cell.classList.add("marked");
+            }
+            grid.appendChild(cell);
+          });
+          cardEl.appendChild(grid);
+          cardsContainer.appendChild(cardEl);
+        });
+
+        noCardsMsg.style.display = (cards.length === 0) ? "block" : "none";
+      }
+
+      // --- Eventos ---
+      loadCardsBtn.addEventListener("click", cargarCartonesDesdeTexto);
+      drawBtn.addEventListener("click", sacarBola);
+      resetBtn.addEventListener("click", reiniciar);
+      applyExcludedBtn.addEventListener("click", aplicarExclusiones);
+      saveConfigBtn.addEventListener("click", guardarConfiguracionLocal);
+      clearConfigBtn.addEventListener("click", borrarConfiguracionLocal);
+
+      // --- Carga inicial ---
+      try{
+        const savedCards = localStorage.getItem(STORAGE_CARDS_KEY);
+        const savedExcluded = localStorage.getItem(STORAGE_EXCLUDED_KEY);
+
+        if(savedCards && savedCards.trim()){
+          cardsInput.value = savedCards;
+        }else{
+          cardsInput.value = DEFAULT_CARDS_TEXT;
+        }
+        cargarCartonesDesdeTexto();
+
+        if(savedExcluded && savedExcluded.trim()){
+          excludedInput.value = savedExcluded;
+          aplicarExclusiones();
+        }else{
+          actualizarUI(true);
+        }
+      }catch(e){
+        console && console.error && console.error(e);
+        cardsInput.value = DEFAULT_CARDS_TEXT;
+        cargarCartonesDesdeTexto();
+      }
+
+    })();
+  </script>
+</div>
